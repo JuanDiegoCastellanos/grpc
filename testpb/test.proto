@@ -1,0 +1,59 @@
+syntax = "proto3";
+import "studentpb/student.proto";
+package test;
+
+option go_package = "github.com/JuanDiegoCastellanos/grpc/testpb";
+
+message Test{
+    string id = 1;
+    string name = 2;
+}
+
+message GetTestRequest{
+    string id = 1;
+}
+message SetTestResponse{
+    string id = 1;
+    string name = 2;
+}
+
+message Question{
+    string id = 1;
+    string answer = 2;
+    string question = 3;
+    string test_id = 4; 
+}
+message QuestionPerTest{
+    string id = 1;
+    string question = 2;
+    bool ok = 3;
+    int32 current = 4;
+    int32 total = 5;
+}
+message SetQuestionResponse{
+    bool ok = 1;
+}
+
+//Enrollar estudiantes en un test especifico
+message EnrollmentRequest {
+    string student_id = 1;
+    string test_id = 2;
+}
+// los estudiantes por test que se esta tomando
+message GetStudentsPerTestRequest{
+    string test_id = 1;
+}
+message TakeTestRequest{
+    string answer = 1;
+    string test_id = 2;
+    string student_id = 3;
+}
+
+service TestService{
+    rpc GetTest(GetTestRequest) returns (Test);
+    rpc SetTest(Test) returns (SetTestResponse);
+    rpc SetQuestion(stream Question) returns (SetQuestionResponse);
+    rpc EnrollStudents(stream EnrollmentRequest) returns (SetQuestionResponse);
+    rpc GetStudentsPerTest(GetStudentsPerTestRequest) returns (stream student.Student);
+    rpc TakeTest(stream TakeTestRequest) returns (stream QuestionPerTest);
+}
